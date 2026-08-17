@@ -2,16 +2,19 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
+        $categories = Category::whereNotNull('parent_id')->get();
+
+        Product::factory(40)->create()->each(function ($product) use ($categories) {
+            $randomCategories = $categories->random(rand(1, 3)); //Nuo 1 iki 3 atsitiktinės subkategorijos
+            $product->categories()->attach($randomCategories->pluck('id'));
+        });
     }
 }
